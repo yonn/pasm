@@ -49,7 +49,7 @@ namespace pasm {
 
 		String(std::string name, std::string str) : Variable(Variable::Type::String, name)
 		{
-			for (int i = 1; i < str.length() - 1; i++) {
+			for (size_t i = 1; i < str.length() - 1; i++) {
 				value += str[i];
 			}
 		}
