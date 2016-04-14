@@ -119,6 +119,7 @@ namespace pasm {
 
 		} catch (std::invalid_argument e) { 
 			error(curr_index_, curr_line_, "Could not parse \"%s\" as a number.", str.c_str());
+			return 0;
 		}
 	}
 }

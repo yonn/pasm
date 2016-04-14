@@ -53,6 +53,7 @@ namespace pasm {
 				case 32:
 					return (value >= INT32_MIN and value <= INT32_MAX);
 				}
+				return false;
 		       }, "Integer literal is too big to fit in the specified register.");
 	}
 	

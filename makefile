@@ -3,10 +3,13 @@ DEBUG = -g
 CFLAGS = -Wall -c -std=c++14 -Wno-unused-variable $(DEBUG)
 LFLAGS = -Wall -std=c++14 -Wno-unused-variable $(DEBUG)
 
-OBJS = parser.o code_parser.o lexer.o parser_debug.o parser_error.o data_parser.o
+OBJS = parser.o code_parser.o lexer.o parser_debug.o parser_error.o data_parser.o encoder.o
 
 pasm: main.cpp $(OBJS)
 	$(CC) $(LFLAGS) main.cpp $(OBJS) -o pasm
+
+encoder.o: encoder/encoder.cpp encoder/encoder.hpp
+	$(CC) $(CFLAGS) encoder/encoder.cpp
 
 parser.o: parser/parser.cpp parser/parser.hpp
 	$(CC) $(CFLAGS) parser/parser.cpp

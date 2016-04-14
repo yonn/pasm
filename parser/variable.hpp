@@ -18,6 +18,8 @@ namespace pasm {
 		std::string name;
 
 		Variable(Type t, std::string n) : type(t), name(n) { }
+		
+		virtual ~Variable() { }
 
 		virtual void print() = 0;
 	};
