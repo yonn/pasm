@@ -4,6 +4,7 @@
 #include <string>
 
 #include "parser/parser.hpp"
+#include "encoder/encoder.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -12,11 +13,15 @@ int main(int argc, char* argv[])
 	auto vars = std::get<1>(stuff);
 	auto labels = std::get<2>(stuff);
 
-	run_tests(exprs);
+	pasm::run_tests(exprs);
 
-	pasm::print_expressions(exprs);
-	pasm::print_labels(labels);
-	pasm::print_variables(vars);
+	//pasm::print_expressions(exprs);
+	//pasm::print_labels(labels);
+	//pasm::print_variables(vars);
+	
+	auto data = pasm::assemble(exprs);
+	
+	pasm::print_hex(data);
 
 	pasm::clean_up(exprs);
 	pasm::clean_up(vars);
