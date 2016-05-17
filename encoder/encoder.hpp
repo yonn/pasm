@@ -28,13 +28,11 @@ namespace pasm {
 	
 	bool operator==(const Registers& r1, const Registers& r2);
 	
-	unsigned char rr_lookup(Registers r);
-	unsigned char rc_lookup(Register::Name r);
+	unsigned char rr_lookup(std::string inst, Registers r);
+	unsigned char rc_lookup(std::string inst, Register::Name r);
 	
-	static std::map<std::string, Register::Name> registers;
-	
-	static std::vector<std::pair<Registers, unsigned char>> rr_table;
-	static std::vector<std::pair<Register::Name, unsigned char>> rc_table;
+	typedef std::vector<std::pair<Registers, unsigned char>> rr_table;
+	typedef std::vector<std::pair<Register::Name, unsigned char>> rc_table;
 
 	void init_maps();
 

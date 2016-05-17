@@ -1,14 +1,20 @@
 #include "encoder.hpp"
 
 namespace pasm {
+
+	std::map<std::string, Register::Name> registers;
+
+	std::map<std::string, rr_table> rr_tables;
+	std::map<std::string, rc_table> rc_tables;
 	
 	bool operator==(const Registers& r1, const Registers& r2)
 	{
 		return ((r1.r1 == r2.r1) and (r1.r2 == r2.r2));
 	}
 	
-	unsigned char rr_lookup(Registers r)
+	unsigned char rr_lookup(std::string inst, Registers r)
 	{
+		auto rr_table = rr_tables[inst];
 		for (auto rr: rr_table) {
 			if (rr.first == r) {
 				return rr.second; 
@@ -17,8 +23,9 @@ namespace pasm {
 		return 0;
 	}
 	
-	unsigned char rc_lookup(Register::Name r)
+	unsigned char rc_lookup(std::string inst, Register::Name r)
 	{
+		auto rc_table = rc_tables[inst];
 		for (auto rc: rc_table) { 
 			if (rc.first == r) {
 				return rc.second;
@@ -53,21 +60,34 @@ namespace pasm {
 		R(CH);
 		R(DH);
 		
-		std::ifstream f("encoder/rr_table.txt");
-		std::string r1, r2;
-		unsigned int byte;
-		while (f >> r1 >> r2 >> std::hex >> byte) {
-			for (auto& c: r1) c = std::toupper(c);
-			for (auto& c: r2) c = std::toupper(c);
-			Registers r(registers[r1], registers[r2]);
-			rr_table.push_back(std::make_pair(r, byte));
-		}
-		f.close();
-		
-		f = std::ifstream("encoder/rc_table.txt");
-		while (f >> r1 >> std::hex >> byte) {
-			for (auto& c: r1) c = std::toupper(c);
-			rc_table.push_back(std::make_pair(registers[r1], byte));
+		std::vector<std::string> insts { "mov" };
+
+		for (auto inst: insts) {
+			std::string rr = "encoder/" + inst + "_rr_table.txt";
+			std::string rc = "encoder/" + inst + "_rc_table.txt";
+
+			std::string r1, r2;
+			unsigned int byte;
+
+			std::ifstream irr(rr);
+			if (irr) {
+				while (irr >> r1 >> r2 >> std::hex >> byte) {
+					for (auto& c: r1) c = std::toupper(c);
+					for (auto& c: r2) c = std::toupper(c);
+					Registers r(registers[r1], registers[r2]);
+					rr_tables[inst].push_back(std::make_pair(r, byte));
+				}
+			}
+			irr.close();
+
+			std::ifstream irc(rc);
+			if (irc) {
+				while (irc >> r1 >> std::hex >> byte) {
+					for (auto& c: r1) c = std::toupper(c);
+					rc_tables[inst].push_back(std::make_pair(registers[r1], byte));
+				}
+			}
+			irc.close();
 		}
 	}
 
@@ -116,23 +136,23 @@ namespace pasm {
 				break;
 			}
 			}
-			data.push_back((int)rr_lookup(Registers(i.expr)));
+			data.push_back((int)rr_lookup("mov", Registers(i.expr)));
 		} else if (i.expr.arg2->type == Argument::Type::ConstantInt) {
 			if (((Register*)i.expr.arg1)->size != 16) {
-				data.push_back((int)rc_lookup(((Register*)i.expr.arg1)->name));
+				data.push_back((int)rc_lookup("mov", ((Register*)i.expr.arg1)->name));
 				std::array<unsigned char, 3> bytes;
 				auto n = ((ConstantInt*)i.expr.arg2)->value;
 				bytes[0] = ((n >> 24) & 0xFF);
 				bytes[1] = ((n >> 16) & 0xFF);
 				bytes[2] = ((n >> 8) & 0xFF);
 				bytes[3] = (n & 0xFF);
-				for (auto b: bytes) {
-					data.push_back(b);
-				}
 				data.push_back((int)((ConstantInt*)i.expr.arg2)->value);
+				for (auto it = bytes.rbegin(); it != bytes.rend(); ++it) {
+					data.push_back(*it);
+				}
 			} else {
 				data.push_back(0x66);
-				data.push_back((int)rc_lookup(((Register*)i.expr.arg1)->name));
+				data.push_back((int)rc_lookup("mov", ((Register*)i.expr.arg1)->name));
 				data.push_back((unsigned char)(((ConstantInt*)i.expr.arg2)->value & 0xFF));
 				data.push_back((unsigned char)(((ConstantInt*)i.expr.arg2)->value >> 8));
 			}
