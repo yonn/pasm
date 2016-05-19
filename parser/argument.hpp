@@ -2,6 +2,7 @@
 #define PASM_ARGUMENT_HPP
 
 #include <string>
+#include <sstream>
 #include <iostream> 
 
 namespace pasm {
@@ -41,10 +42,11 @@ namespace pasm {
 	class Argument {
 	public:
 		enum class Type {
-			None,
+			None, 
 			Register,
 			ConstantInt,
-			Label
+			Label,
+			Symbol
 		} type;
 
 		Argument(Type t) : type(t) { }
@@ -52,6 +54,13 @@ namespace pasm {
 		virtual void print()
 		{
 			std::cout << "Argument(" << ArgumentType_str[(int)type] << ")";
+		}
+
+		virtual std::string str()
+		{
+			std::ostringstream s;
+			s << "Argument(" << ArgumentType_str[(int)type] << ")";
+			return s.str();
 		}
 
 		virtual ~Argument() { }
@@ -76,6 +85,13 @@ namespace pasm {
 		{
 			std::cout << "Register(" << RegisterName_str[(int)name] << ", " << size << ", " << Access_str[(int)access] << ")"; 
 		}
+		
+		virtual std::string str()
+		{
+			std::ostringstream s;
+			s  << "Register(" << RegisterName_str[(int)name] << ", " << size << ", " << Access_str[(int)access] << ")";
+			return s.str();
+		}
 	};
 
 	class ConstantInt : public Argument {
@@ -87,6 +103,13 @@ namespace pasm {
 		virtual void print()
 		{
 			std::cout << "ConstantInt(" << value << ")";
+		}
+		
+		virtual std::string str()
+		{
+			std::ostringstream s;
+			s << "ConstantInt(" << value << ")";
+			return s.str();
 		}
 	};
 
@@ -100,6 +123,13 @@ namespace pasm {
 		{
 			std::cout << "Label(" << name << ")";
 		}
+
+		virtual std::string str()
+		{
+			std::ostringstream s;
+			s << "Label(" << name << ")";
+			return s.str();
+		}
 	};
 
 	class SymbolArg : public Argument {
@@ -108,11 +138,18 @@ namespace pasm {
 
 		Access access;
 
-		SymbolArg(std::string n, Access a = Access::Value) : Argument(Argument::Type::Label), name(n), access(a) { }
+		SymbolArg(std::string n, Access a = Access::Value) : Argument(Argument::Type::Symbol), name(n), access(a) { }
 
 		virtual void print()
 		{
 			std::cout << "Symbol(" << name << ", " << Access_str[(int)access] << ")";
+		}
+
+		virtual std::string str()
+		{
+			std::ostringstream s;
+			s << "Symbol(" << name << ", " << Access_str[(int)access] << ")";
+			return s.str();
 		}
 	};
 }

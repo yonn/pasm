@@ -156,6 +156,8 @@ namespace pasm {
 				data.push_back((unsigned char)(((ConstantInt*)i.expr.arg2)->value & 0xFF));
 				data.push_back((unsigned char)(((ConstantInt*)i.expr.arg2)->value >> 8));
 			}
+		} else {
+			error(i.index, i.line, "Unsupported type '%s', for second arg of mov.", ArgumentType_str[(int)i.expr.arg2->type]);
 		}
 		return data;
 	}
