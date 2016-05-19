@@ -107,6 +107,9 @@ namespace pasm {
 		case Opcode::mov: {
 			return encode_mov(inst);
 		}
+		case Opcode::int_: {
+			return encode_int(inst);
+		}
 		default: {
 			error(inst.index, inst.line, "Unsupported opcode for assembly.");
 			return bd();
@@ -159,6 +162,14 @@ namespace pasm {
 		} else {
 			error(i.index, i.line, "Unsupported type '%s', for second arg of mov.", ArgumentType_str[(int)i.expr.arg2->type]);
 		}
+		return data;
+	}
+
+	bd encode_int(ParserIR& i)
+	{
+		bd data;
+		data.push_back(0xcd);
+		data.push_back((unsigned char)((ConstantInt*)i.expr.arg1)->value);
 		return data;
 	}
 	

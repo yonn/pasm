@@ -5,8 +5,8 @@ section .data
 section .text
 ;global _start
 _start:
-	mov edx, [size]
-	mov ecx, hello
+	;mov edx, [size]
+	;mov ecx, hello
 	mov ebx, 1
 	mov eax, 4
 	int 0x80
