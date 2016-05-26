@@ -24,6 +24,7 @@ namespace pasm {
 		opcodes_["add"] = std::make_pair(Opcode::add, 2);
 		opcodes_["int"] = std::make_pair(Opcode::int_, 1);
 		opcodes_["jmp"] = std::make_pair(Opcode::jmp, 1);
+		opcodes_["ret"] = std::make_pair(Opcode::ret, 0);
 	}
 
 	void CodeParser::init_registers()
@@ -80,6 +81,7 @@ namespace pasm {
 				case 0:
 					e.arg1 = new Argument(Argument::Type::None);
 					e.arg2 = new Argument(Argument::Type::None);
+					finished_ = true; //I don't know why this is here, but it doesn't work otherwise.
 					break;
 				case 1:
 					e.arg1 = get_next_arg(tokens);

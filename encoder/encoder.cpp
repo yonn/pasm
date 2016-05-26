@@ -110,6 +110,9 @@ namespace pasm {
 		case Opcode::int_: {
 			return encode_int(inst);
 		}
+		case Opcode::ret: {
+			return encode_ret(inst);
+		}
 		default: {
 			error(inst.index, inst.line, "Unsupported opcode for assembly.");
 			return bd();
@@ -171,6 +174,11 @@ namespace pasm {
 		data.push_back(0xcd);
 		data.push_back((unsigned char)((ConstantInt*)i.expr.arg1)->value);
 		return data;
+	}
+
+	bd encode_ret(ParserIR& instruction)
+	{
+		return (bd {0xc3});
 	}
 	
 	void print_hex(const binary_data& data)

@@ -8,14 +8,16 @@ namespace pasm {
 		mov,
 		add,
 		int_,
-		jmp
+		jmp,
+		ret,
 	};
 
 	static const char* const Opcode_str[] = { "None",
 						  "mov",
 				                  "add",
 					          "int",
-						  "jmp" };
+						  "jmp",
+						  "ret", };
 
 }
 

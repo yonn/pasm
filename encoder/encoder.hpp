@@ -45,6 +45,7 @@ namespace pasm {
 	
 	bd encode_mov(ParserIR& instruction);
 	bd encode_int(ParserIR& instruction);
+	bd encode_ret(ParserIR& instruction);
 	
 	void print_hex(const binary_data& data);
 }
