@@ -3,12 +3,17 @@ DEBUG = -g
 CFLAGS = -Wall -c -std=c++14 -Wno-unused-variable $(DEBUG)
 LFLAGS = -Wall -std=c++14 -Wno-unused-variable $(DEBUG)
 
-OBJS = parser.o code_parser.o lexer.o parser_debug.o parser_error.o data_parser.o encoder.o
+OBJS = parser.o code_parser.o lexer.o parser_debug.o parser_error.o formater.o data_parser.o encoder.o
 
 PARSER_INCLUDES = $(wildcard parser/*.hpp)
 
+.PHONEY: pasm clean
+
 pasm: main.cpp $(OBJS) $(PARSER_INCLUDES)
 	$(CC) $(LFLAGS) main.cpp $(OBJS) -o pasm
+
+formater.o: formater/ELF_file.cpp formater/ELF_file.hpp
+	$(CC) $(CFLAGS) formater/ELF_file.cpp -o formater.o
 
 encoder.o: encoder/encoder.cpp encoder/encoder.hpp
 	$(CC) $(CFLAGS) encoder/encoder.cpp
@@ -31,3 +36,6 @@ parser_debug.o: parser/parser_debug.cpp parser/parser_debug.hpp $(PARSER_INCLUDE
 
 parser_error.o: parser/parser_error.cpp parser/parser_error.hpp $(PARSER_INCLUDES)
 	$(CC) $(CFLAGS) parser/parser_error.cpp
+	
+clean: 
+	rm -rf *.o

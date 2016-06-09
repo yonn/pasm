@@ -5,6 +5,7 @@
 
 #include "parser/parser.hpp"
 #include "encoder/encoder.hpp"
+#include "formater/ELF_file.hpp"
 
 int main(int argc, char* argv[])
 {
