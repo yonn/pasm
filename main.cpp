@@ -22,6 +22,8 @@ int main(int argc, char* argv[])
 	
 	auto data = pasm::assemble(exprs);
 	
+	int rc = pasm::format(data, argv[2]);
+	
 	pasm::print_hex(data);
 
 	pasm::clean_up(exprs);
