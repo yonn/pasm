@@ -9,6 +9,7 @@
 
 int main(int argc, char* argv[])
 {
+	const char* out;
 	auto stuff = pasm::parse_file(argv[1]); 
 	auto exprs = std::get<0>(stuff);
 	auto vars = std::get<1>(stuff);
@@ -21,8 +22,14 @@ int main(int argc, char* argv[])
 	//pasm::print_variables(vars);
 	
 	auto data = pasm::assemble(exprs);
+
+	if (argc < 3) {
+		out = "a.out";
+	} else {
+		out = argv[2];
+	}
 	
-	int rc = pasm::format(data, argv[2]);
+	int rc = pasm::format(data, out);
 	
 	pasm::print_hex(data);
 
