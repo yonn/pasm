@@ -111,10 +111,9 @@ namespace pasm
 			Elf32_Phdr ph;
 
 			ph.p_type = PT_LOAD;
-
 			ph.p_offset = sizeof(Elf32_Ehdr) /* + 1*/;
 
-			ph.p_vaddr = 0x200bad;
+			ph.p_vaddr = 0x8002BAD;
 
 			ph.p_paddr = 0;
 
