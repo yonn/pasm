@@ -60,7 +60,7 @@ namespace pasm
 			
 			/*_elf_header.e_entry initilazation*/	
 			if(type == Types::Executable)
-				_elf_header.e_entry = /*0x804a250*/ 0x8002BAD; //randomly and manually choosen
+				_elf_header.e_entry = /*0x804a250*/ 0x802BAD0; //randomly and manually choosen
 			else
 				_elf_header.e_entry = 0x0;
 			
@@ -113,7 +113,7 @@ namespace pasm
 			ph.p_type = PT_LOAD;
 			ph.p_offset = sizeof(Elf32_Ehdr) /* + 1*/;
 
-			ph.p_vaddr = 0x8002BAD;
+			ph.p_vaddr = 0x802BAD0;
 
 			ph.p_paddr = 0;
 
