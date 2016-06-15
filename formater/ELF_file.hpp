@@ -78,7 +78,6 @@ namespace pasm
 		vector<Elf32_Shdr>& get_Shdr_table() { return _Shdr_table; };
 		fstream& get_output_file() { return _output_file; };
 
-		private:
 		Elf32_Ehdr _elf_header;
 		vector<Elf32_Phdr> _Phdr_table;
 		vector<Elf32_Shdr> _Shdr_table;

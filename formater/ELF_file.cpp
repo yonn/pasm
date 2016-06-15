@@ -16,8 +16,13 @@ namespace pasm
 	
 	int format(const binary_data& text_bin_dump, const string& output_file_name)
 	{
-		ELF::ELF_file output_file(ELF::Types::Linkable, output_file_name);
+		ELF::ELF_file output_file(ELF::Types::Executable, output_file_name);
+
+		output_file._elf_header.e_phoff = sizeof(Elf32_Ehdr);
+
+		output_file._elf_header.e_phnum = 1;
 		
+
 		output_file.write(text_bin_dump);
 		
 		return 0; //OK
@@ -102,6 +107,39 @@ namespace pasm
 			//elf_hdr[sizeof(Elf32_Ehdr) + 1] = NULL;
 			
 			_output_file.write(elf_hdr, sizeof(Elf32_Ehdr));
+
+			Elf32_Phdr ph;
+
+			ph.p_type = PT_LOAD;
+
+			ph.p_offset = sizeof(Elf32_Ehdr) /* + 1*/;
+
+			ph.p_vaddr = 0x200bad;
+
+			ph.p_paddr = 0;
+
+			ph.p_memsz = 0;
+
+			ph.p_flags = PF_X;
+
+			ph.p_align = 0;
+
+			char* p_hdr = reinterpret_cast<char*>(&ph);
+
+			_output_file.write(p_hdr, sizeof(Elf32_Phdr));
+
+			size_t sum = 0;
+			std::vector<char> text;
+
+			for (const auto& d: bin_dump) {
+				for (const auto c: d) {
+					sum++;
+					text.push_back(c);
+				}
+			}
+
+			
+			_output_file.write(&text[0], sum);
 		}
 		
 		
