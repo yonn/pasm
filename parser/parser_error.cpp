@@ -37,11 +37,18 @@ namespace pasm {
 
 	void run_tests(std::vector<ParserIR> e)
 	{
-		assert(e, &two_register_P, &argument_type_P<Argument::Type::Register>, &argument_type_P<Argument::Type::Register>, [](auto a1, auto a2) {
-					return (((Register*)a1)->size) == (((Register*)a2)->size);
-				}, "Incompatible register sizes. Registers must be the same size.");
+		assert(e,
+		       &two_register_P,
+		       &argument_type_P<Argument::Type::Register>,
+		       &argument_type_P<Argument::Type::Register>,
+		       [](auto a1, auto a2) {
+		               return (((Register*)a1)->size) == (((Register*)a2)->size);
+		       }, "Incompatible register sizes. Registers must be the same size.");
 
-		assert(e, &opcode_type_P<Opcode::mov>, &argument_type_P<Argument::Type::Register>, &argument_type_P<Argument::Type::ConstantInt>,
+		assert(e,
+		       &opcode_type_P<Opcode::mov>,
+		       &argument_type_P<Argument::Type::Register>,
+		       &argument_type_P<Argument::Type::ConstantInt>,
 		       [](auto a1, auto a2) {
 				int size = ((Register*)a1)->size;
 				long long value = ((ConstantInt*)a2)->value;

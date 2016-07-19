@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 
 	pasm::print_expressions(exprs);
 	pasm::print_labels(labels);
-	//pasm::print_variables(vars);
+	pasm::print_variables(vars);
 	
 	auto data = pasm::assemble(exprs);
 
