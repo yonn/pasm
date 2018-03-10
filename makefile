@@ -7,13 +7,15 @@ OBJS = parser.o code_parser.o lexer.o parser_debug.o parser_error.o formater.o d
 
 PARSER_INCLUDES = $(wildcard parser/*.hpp)
 
-.PHONEY: pasm clean
+.PHONEY: pasm clean all
+
+all: pasm
 
 pasm: main.cpp $(OBJS) $(PARSER_INCLUDES)
 	$(CC) $(LFLAGS) main.cpp $(OBJS) -o pasm
 
-formater.o: formater/ELF_file.cpp formater/ELF_file.hpp
-	$(CC) $(CFLAGS) formater/ELF_file.cpp -o formater.o
+formater.o: formater/elf_file.cpp formater/elf_file.hpp
+	$(CC) $(CFLAGS) formater/elf_file.cpp -o formater.o
 
 encoder.o: encoder/encoder.cpp encoder/encoder.hpp
 	$(CC) $(CFLAGS) encoder/encoder.cpp
@@ -38,4 +40,4 @@ parser_error.o: parser/parser_error.cpp parser/parser_error.hpp $(PARSER_INCLUDE
 	$(CC) $(CFLAGS) parser/parser_error.cpp
 	
 clean: 
-	rm -rf *.o
+	rm -rf *.o pasm
