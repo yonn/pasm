@@ -7,9 +7,35 @@
 #include <fstream>
 #include <iostream>
 #include <utility>
-//#include <cstdint>
 
 using namespace std;
+
+
+static vector<char> create_program_header(size_t textbase, size_t textoffset, size_t textsz)
+{
+	Elf32_Phdr ph;
+	vector<char> phdr;
+
+	ph.p_type = PT_LOAD; // this segment will be loaded into memory
+	ph.p_flags = PF_X | PF_R; // permissions for accessing this segment
+	ph.p_offset = textoffset;
+	// the entry point
+	ph.p_vaddr = textbase + textoffset;
+	ph.p_paddr = 0;
+	ph.p_filesz = textsz;
+	ph.p_memsz = textsz;
+	ph.p_align = 0x0;
+
+	char* p_hdr = reinterpret_cast<char*>(&ph);
+
+	//output_file.write(p_hdr, sizeof(Elf32_Phdr));
+	for(size_t i = 0; i < sizeof(Elf32_Phdr); ++i)
+	{
+		phdr.push_back(p_hdr[i]);
+	}
+
+	return phdr;
+}
 
 namespace pasm 
 {
@@ -60,7 +86,9 @@ namespace pasm
 			
 			/*_elf_header.e_entry initilazation*/	
 			if(type == Types::Executable)
-				_elf_header.e_entry = /*0x804a250*/ 0x802BAD0; //randomly and manually choosen
+				//_elf_header.e_entry = 0x802BAD0; //randomly and manually choosen
+				_elf_header.e_entry = this->BASE + this->OFFSET;
+				//_elf_header.e_entry = 0x40000000 + sizeof(Elf32_Ehdr) + sizeof(Elf32_Phdr);
 			else
 				_elf_header.e_entry = 0x0;
 			
@@ -84,7 +112,8 @@ namespace pasm
 			_elf_header.e_phnum = 0; 
 			
 			/*_elf_header.e_shentsize initilazation*/	
-			_elf_header.e_shentsize = sizeof(Elf32_Shdr);
+			//_elf_header.e_shentsize = sizeof(Elf32_Shdr);
+			_elf_header.e_shentsize = 0x0;
 			
 			/*_elf_header.e_shnum initilazation*/
 			//will be altered later to the number of section header table entries
@@ -108,41 +137,28 @@ namespace pasm
 			
 			_output_file.write(elf_hdr, sizeof(Elf32_Ehdr));
 
-			Elf32_Phdr ph;
-
-			ph.p_type = PT_LOAD;
-			ph.p_offset = sizeof(Elf32_Ehdr) /* + 1*/;
-
-			ph.p_vaddr = 0x802BAD0;
-
-			ph.p_paddr = 0;
-
-			ph.p_memsz = 0;
-
-			ph.p_flags = PF_X;
-
-			ph.p_align = 0;
-
-			char* p_hdr = reinterpret_cast<char*>(&ph);
-
-			_output_file.write(p_hdr, sizeof(Elf32_Phdr));
-
-			size_t sum = 0;
 			std::vector<char> text;
 
 			for (const auto& d: bin_dump) {
 				for (const auto c: d) {
-					sum++;
 					text.push_back(c);
 				}
 			}
 
-			
-			_output_file.write(&text[0], sum);
+			vector<char> phdr = create_program_header(
+				this->BASE, this->OFFSET, text.size()
+			);
+			//vector<char> strtable = create_string_table(strings);
+
+			_output_file.write(&phdr[0], phdr.size());
+			_output_file.write(&text[0], text.size());
+
+			//size_t section_table_offset = get_offset(_output_file);
+			//create_section_table(_output_file, section_table_offset);
 		}
 		
 		
-		ELF_file& ELF_file::operator= (ELF_file&& other)
+		ELF_file& ELF_file::operator=(ELF_file&& other)
 		{
 			if(this != &other)
 			{

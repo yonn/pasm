@@ -16,7 +16,7 @@
 #define R(r) (registers[#r] = Register::Name::r)
 
 namespace pasm {
-	
+
 	struct Registers {
 		Register::Name r1;
 		Register::Name r2;
