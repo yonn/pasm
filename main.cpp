@@ -7,7 +7,7 @@
 #include "encoder/encoder.hpp"
 #include "formater/elf_file.hpp"
 
-int main(int argc, char* argv[])
+int _main(int argc, char* argv[])
 {
 	const char* out;
 	auto stuff = pasm::parse_file(argv[1]); 
@@ -37,4 +37,12 @@ int main(int argc, char* argv[])
 	pasm::clean_up(vars);
 
 	return 0;
+}
+
+extern "C"
+{
+	int main(int argc, char *argv[])
+	{
+		return _main(argc, argv);
+	}
 }
