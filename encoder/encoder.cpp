@@ -1,5 +1,7 @@
 #include "encoder.hpp"
 
+#include <iostream>
+
 namespace pasm {
 
 	std::map<std::string, Register::Name> registers;
@@ -123,9 +125,13 @@ namespace pasm {
 	bd encode_mov(ParserIR& i)
 	{
 		bd data;
+
+		// error handling
 		if (i.expr.arg1->type != Argument::Type::Register) {
 			error(i.index, i.line, "In 'mov' first arg must be register.");
 		}
+
+		// mov reg, reg
 		if (i.expr.arg2->type == Argument::Type::Register) {
 			switch (((Register*)i.expr.arg1)->size) {
 			case 8: {
@@ -143,7 +149,10 @@ namespace pasm {
 			}
 			}
 			data.push_back((int)rr_lookup("mov", Registers(i.expr)));
-		} else if (i.expr.arg2->type == Argument::Type::ConstantInt) {
+		}
+		// mov reg, const
+		else if (i.expr.arg2->type == Argument::Type::ConstantInt) {
+			std::cout << "Reg size: " << ((Register*)i.expr.arg1)->size << std::endl;
 			if (((Register*)i.expr.arg1)->size != 16) {
 				data.push_back((int)rc_lookup("mov", ((Register*)i.expr.arg1)->name));
 				std::array<unsigned char, 3> bytes;
@@ -162,7 +171,9 @@ namespace pasm {
 				data.push_back((unsigned char)(((ConstantInt*)i.expr.arg2)->value & 0xFF));
 				data.push_back((unsigned char)(((ConstantInt*)i.expr.arg2)->value >> 8));
 			}
-		} else {
+		}
+		// error handling
+		else {
 			error(i.index, i.line, "Unsupported type '%s', for second arg of mov.", ArgumentType_str[(int)i.expr.arg2->type]);
 		}
 		return data;
